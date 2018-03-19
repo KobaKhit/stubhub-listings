@@ -4,13 +4,13 @@ https://dash.plot.ly/deployment
 
 https://dash.plot.ly/sharing-data-between-callbacks
 
-# Deploy
+## Deploy
 
 conda create -m venv
 
 cond install pip
 
-pip install dash dash-renderer dash-core-components dash-html-components plotly gunicorn numpy tqdm
+pip install dash dash-renderer dash-core-components dash-html-components dash_table_experiments plotly gunicorn numpy tqdm
 
 pip freeze > requirements.txt
 
