@@ -27,3 +27,4 @@ virtualenv==15.1.0
 Werkzeug==0.14.1
 numpy
 pandas
+tqdm
