@@ -80,15 +80,15 @@ app.layout = html.Div(children=[
             ], className="six columns")
     ],className = 'row'),
 
-    html.Div([
-        html.Div([
-                dcc.Markdown(d("""
-                    **Selection Data**
-                    Choose the lasso or rectangle tool in the graph's menu
-                    bar and then select bars in the graph.
-                """))
-            ], className="six columns")
-    ],className = 'row'),
+    # html.Div([
+    #     html.Div([
+    #             dcc.Markdown(d("""
+    #                 **Selection Data**
+    #                 Choose the lasso or rectangle tool in the graph's menu
+    #                 bar and then select bars in the graph.
+    #             """))
+    #         ], className="six columns")
+    # ],className = 'row'),
 
      html.A(
         'Download All Listings',
