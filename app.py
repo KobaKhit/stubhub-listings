@@ -26,9 +26,21 @@ styles = {
     'datatable':{'font-size':'12px'}
 }
 
+# Enter user's API key, secret, and Stubhub login
+app_token = '7131e534-bbec-374f-b1e4-1bdf6909a8ee'
+consumer_key = 'jC475_MWRt6VV0aRz6nhA4Kpfloa'
+consumer_secret = 'U7bW44Spj64CDYwUQSofJaMh1zka'
+stubhub_username = 'kobakhit@gmail.com'
+stubhub_password = '12271991Nba'
+
 df = pd.read_csv('flyers listings.csv')
 df = df.loc[(df['Event']=='Washington Capitals 3/18/2018'),:]
 df = df.rename(spacer,axis='columns')
+
+DESC = '''This app allows you to download all stubhub listings for a given event id. 
+          I created it using [Dash](https://plot.ly/products/dash/) and a [stubhub API](https://github.com/KobaKhit/stubhubAPI) 
+          wrapper I wrote in python.
+'''
 
 app = dash.Dash(__name__)
 server = app.server
@@ -42,6 +54,8 @@ app.layout = html.Div(children=[
             html.Div(children='''
                 Enter event id and press submit.
             '''),
+            html.Div(['stubhub.com/event/',
+                      html.Strong('103511793')], style = {'color':'purple'}),
             html.Div([
             dcc.Input(id='input-1-state', type='text', value=''),
             html.Button(id='submit-button', n_clicks=0, children='Submit'),
@@ -52,10 +66,11 @@ app.layout = html.Div(children=[
         className='six columns'),
 
         html.Div([
-            html.Div(children=['Created with haste ',
-                                # html.I(className="fa fa-heart"), 
-                                ' by ',
-                                html.A('Koba',href='http://www.kobakhit.com/',target='_blank')]
+            html.Div(children=[html.Br(),dcc.Markdown(DESC), 
+                               'Created in haste ',
+                               # html.I(className="fa fa-heart"), 
+                               ' by ',
+                               html.A('Koba',href='http://www.kobakhit.com/',target='_blank')]
             ,className = 'container')], 
         className='six columns', style = {'text-align':'right'})
     ], className = 'row'),
@@ -80,15 +95,15 @@ app.layout = html.Div(children=[
             ], className="six columns")
     ],className = 'row'),
 
-    # html.Div([
-    #     html.Div([
-    #             dcc.Markdown(d("""
-    #                 **Selection Data**
-    #                 Choose the lasso or rectangle tool in the graph's menu
-    #                 bar and then select bars in the graph.
-    #             """))
-    #         ], className="six columns")
-    # ],className = 'row'),
+    html.Div([
+        html.Div([
+                dcc.Markdown(d("""
+                    **Selection Data**
+                    Choose the lasso or rectangle tool in the graph's menu
+                    bar and then select bars in the graph.
+                """))
+            ], className="twelve columns")
+    ],className = 'row'),
 
      html.A(
         'Download All Listings',
@@ -132,12 +147,6 @@ def sort_mixed_list(lst):
 
 # Get listings
 def stubhub_api(eventid):
-    # Enter user's API key, secret, and Stubhub login
-    app_token = '7131e534-bbec-374f-b1e4-1bdf6909a8ee'
-    consumer_key = 'jC475_MWRt6VV0aRz6nhA4Kpfloa'
-    consumer_secret = 'U7bW44Spj64CDYwUQSofJaMh1zka'
-    stubhub_username = 'kobakhit@gmail.com'
-    stubhub_password = '12271991Nba'
 
     st = St(app_token,consumer_key,consumer_secret,stubhub_username,stubhub_password)
 
@@ -208,13 +217,13 @@ def filter_points(dff,selectedDatas):
             if selected_data is not None:
                 selected_index = [p['pointNumbers'] for p in selected_data['points']]
                 selected_index = sum(selected_index,[])
-                selected_index = df.iloc[selected_index].index
+                selected_index = dff.iloc[selected_index].index
                 if len(selected_index) > 0:
                     selectedids = np.intersect1d(
                         selectedids, selected_index)
 
         print(selectedids, file=sys.stderr)
-        dff = df.loc[df.index.isin(selectedids),:]
+        dff = dff.loc[dff.index.isin(selectedids),:]
         return selectedids
 
 # submit button notification
@@ -223,11 +232,14 @@ def filter_points(dff,selectedDatas):
               dash.dependencies.Input('cache', 'children')],
               [dash.dependencies.State('input-1-state', 'value')])
 def update_output(n_clicks,cache, input1):
-    dff = pd.read_json(eval(cache), orient='split')
-    retrieve_time = dff['retrieve Time'].iloc[0]
-    return html.Div(['There are {} listings for event id {}.'.format(dff.shape[0], input1),
-                     html.Br(),
-                     'Data was retrieved on {}'.format(retrieve_time)])
+    try:
+        dff = pd.read_json(eval(cache), orient='split')
+        retrieve_time = dff['retrieve Time'].iloc[0]
+        return html.Div(['There are {} listings for event id {}.'.format(dff.shape[0], input1),
+                         html.Br(),
+                         'Data was retrieved on {}'.format(retrieve_time)])
+    except:
+        return 'Invalid event id.'
 
 # fetch data suing stubhub api
 @app.callback(dash.dependencies.Output('cache', 'children'),
@@ -237,6 +249,8 @@ def get_data(n_clicks, input1):
     dff = df
     if input1 != '': 
         dff = stubhub_api(input1)
+        if dff is None:
+            return json.dumps([None])
     return json.dumps(dff.to_json(orient='split'))
 
 # Display Hist selection
