@@ -38,7 +38,7 @@ df = df.loc[(df['Event']=='Washington Capitals 3/18/2018'),:]
 df = df.rename(spacer,axis='columns')
 
 DESC = '''This app allows you to download all stubhub listings for a given event id. 
-          I created it using [Dash](https://plot.ly/products/dash/) and a [stubhub API](https://github.com/KobaKhit/stubhubAPI) 
+          I developed it using [Dash](https://plot.ly/products/dash/) and a [stubhub API](https://github.com/KobaKhit/stubhubAPI) 
           wrapper I wrote in python.
 '''
 
