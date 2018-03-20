@@ -290,8 +290,8 @@ def create_price(data):
               dash.dependencies.Input('g2', 'selectedData')])
 def generate_heatmap(data,*selectedDatas):
     dff = pd.read_json(eval(data), orient='split')
-    ind = filter_points(dff,selectedDatas)
-    return create_heatmap(dff.iloc[ind],'Avg Seat Price By Section and Row/Item')
+    #ind = filter_points(dff,selectedDatas)
+    return create_heatmap(dff,'Avg Seat Price By Section and Row/Item')
 
 # create and filter table
 @app.callback(
