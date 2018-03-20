@@ -163,7 +163,7 @@ def create_heatmap(dff,title):
                          index=['section Name'], columns=['row'], 
                          aggfunc=np.sum)
 
-    dff = dff_price.div(dff_quantity)
+    dff = dff_price
 
     cols = sort_mixed_list(list(dff.columns.values))
     dff = dff[cols]
