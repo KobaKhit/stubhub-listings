@@ -174,6 +174,9 @@ def create_heatmap(dff,title):
 
     dff = dff_price
 
+    height = dff.shape[0]*15
+    if height < 400: height = 400
+
     cols = sort_mixed_list(list(dff.columns.values))
     dff = dff[cols]
     dff_quantity = dff_quantity[cols]
@@ -202,7 +205,7 @@ def create_heatmap(dff,title):
     layout = go.Layout(xaxis=dict(categoryorder='array', categoryarray=list(dff.columns.values), type="category", side="top"),
                        yaxis=dict(tickfont=dict(size=8)),
                        margin=go.Margin(l=200,r=50,b=100,t=150,pad=4),
-                       height = 1500,
+                       height = height,
                        title = 'Average Price Per Seat by Section and Row/Item')
     # fig = go.Figure(data=[trace], layout=layout)
     return {
@@ -282,10 +285,13 @@ def create_price(data):
 
 # create heatmap
 @app.callback(dash.dependencies.Output('heatmap', 'figure'),
-              [dash.dependencies.Input('cache', 'children')])
-def generate_heatmap(data):
+              [dash.dependencies.Input('cache', 'children'),
+              dash.dependencies.Input('g1', 'selectedData'),
+              dash.dependencies.Input('g2', 'selectedData')])
+def generate_heatmap(data,*selectedDatas):
     dff = pd.read_json(eval(data), orient='split')
-    return create_heatmap(dff,'Avg Seat Price By Section and Row/Item')
+    ind = filter_points(dff,selectedDatas)
+    return create_heatmap(dff.iloc[ind],'Avg Seat Price By Section and Row/Item')
 
 # create and filter table
 @app.callback(
