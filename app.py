@@ -23,10 +23,6 @@ def spacer(text):
     return re.sub(r'([A-Z])',r" \1",text).strip()
 
 styles = {
-    'pre': {
-        'border': 'thin lightgrey solid',
-        'overflowX': 'scroll'
-    },
     'datatable':{'font-size':'12px'}
 }
 
@@ -38,18 +34,31 @@ app = dash.Dash(__name__)
 server = app.server
 
 app.layout = html.Div(children=[
-    html.H1(children='Stubhub Listings'),
-
-    html.Div(children='''
-        Enter event id and press submit.
-    '''
-    ),
 
     html.Div([
-        dcc.Input(id='input-1-state', type='text', value=''),
-        html.Button(id='submit-button', n_clicks=0, children='Submit'),
-        html.Div(id='output-state'),
-        html.Div(id='cache', style={'display': 'none'})]),
+        html.Div([
+            html.H1(children='Stubhub Listings'),
+
+            html.Div(children='''
+                Enter event id and press submit.
+            '''),
+            html.Div([
+            dcc.Input(id='input-1-state', type='text', value=''),
+            html.Button(id='submit-button', n_clicks=0, children='Submit'),
+            html.Div(id='output-state'),
+            html.Div(id='cache', style={'display': 'none'})])
+
+            ], 
+        className='six columns'),
+
+        html.Div([
+            html.Div(children=['Created with haste ',
+                                # html.I(className="fa fa-heart"), 
+                                ' by ',
+                                html.A('Koba',href='http://www.kobakhit.com/',target='_blank')]
+            ,className = 'container')], 
+        className='six columns', style = {'text-align':'right'})
+    ], className = 'row'),
 
     # dcc.Tabs(
     #     tabs=[
@@ -77,8 +86,7 @@ app.layout = html.Div(children=[
                     **Selection Data**
                     Choose the lasso or rectangle tool in the graph's menu
                     bar and then select bars in the graph.
-                """)),
-                html.Pre(id='selected-data', style=styles['pre'])
+                """))
             ], className="six columns")
     ],className = 'row'),
 
@@ -153,7 +161,7 @@ def create_heatmap(dff,title):
 
     dff_quantity = pd.pivot_table(dff, values='quantity', 
                          index=['section Name'], columns=['row'], 
-                         aggfunc=np.mean)
+                         aggfunc=np.sum)
 
     dff = dff_price.div(dff_quantity)
 
@@ -170,7 +178,7 @@ def create_heatmap(dff,title):
     for yi, yy in enumerate(y):
         hovertext.append(list())
         for xi, xx in enumerate(x):
-            hovertext[-1].append('''Row/Item: {}<br />Section: {}<br />Avg. Price: ${:,.2f}<br />Avg. Quantity: {:,.0f}'''
+            hovertext[-1].append('''Row/Item: {}<br />Section: {}<br />Avg. Price: ${:,.2f}<br />Quantity: {:,.0f}'''
                                  .format(xx, yy, z[yi][xi],q[yi][xi]))
 
 
@@ -217,10 +225,9 @@ def filter_points(dff,selectedDatas):
 def update_output(n_clicks,cache, input1):
     dff = pd.read_json(eval(cache), orient='split')
     retrieve_time = dff['retrieve Time'].iloc[0]
-    return '''
-        There are {} listings for event id {}.
-        Data was retrieved on {}
-    '''.format(dff.shape[0], input1,retrieve_time)
+    return html.Div(['There are {} listings for event id {}.'.format(dff.shape[0], input1),
+                     html.Br(),
+                     'Data was retrieved on {}'.format(retrieve_time)])
 
 # fetch data suing stubhub api
 @app.callback(dash.dependencies.Output('cache', 'children'),
@@ -233,16 +240,16 @@ def get_data(n_clicks, input1):
     return json.dumps(dff.to_json(orient='split'))
 
 # Display Hist selection
-@app.callback(
-    dash.dependencies.Output('selected-data', 'children'),
-    [dash.dependencies.Input('g2', 'selectedData')])
-def display_selected_data(selectedDatas):
-    if selectedDatas is None: return
-    rows = [p['pointNumbers'] for p in selectedDatas['points']]
-    rows = sum(rows,[])
-    #points = filter_points(selectedDatas).index.values.tolist()
+# @app.callback(
+#     dash.dependencies.Output('selected-data', 'children'),
+#     [dash.dependencies.Input('g2', 'selectedData')])
+# def display_selected_data(selectedDatas):
+#     if selectedDatas is None: return
+#     rows = [p['pointNumbers'] for p in selectedDatas['points']]
+#     rows = sum(rows,[])
+#     #points = filter_points(selectedDatas).index.values.tolist()
 
-    return json.dumps([selectedDatas], indent=2)
+#     return json.dumps([selectedDatas], indent=2)
 
 
 # create quantity histogram
@@ -299,6 +306,15 @@ def update_download_link(selected_row_indices):
 app.css.append_css({
     'external_url': 'https://codepen.io/chriddyp/pen/bWLwgP.css'
 })
+
+# font awesome
+app.css.append_css({
+    'external_url': 'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'
+})
+
+# Loading screen CSS
+app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/brPBPO.css"})
+
 
 
 if __name__ == '__main__':
