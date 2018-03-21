@@ -17,7 +17,7 @@ import re
 from textwrap import dedent as d
 import json
 import sys
-import base64 
+
 
 
 
@@ -41,12 +41,12 @@ df = df.loc[(df['Event']=='Washington Capitals 3/18/2018'),:]
 df = df.rename(spacer,axis='columns')
 
 DESC = '''This app enables you to download all stubhub listings for a given event id. 
-          I developed it using [Dash](https://plot.ly/products/dash/) and my [stubhub API](https://github.com/KobaKhit/stubhubAPI) 
+           I developed it using [Dash](https://plot.ly/products/dash/) and my [stubhub API](https://github.com/KobaKhit/stubhubAPI) 
           python wrapper.
 '''
 
 app = Dash_responsive()
-app.title = 'Stubhub Listings'
+app.title = 'Stuhub Listings'
 server = app.server
 
 app.layout = html.Div(children=[
@@ -74,7 +74,7 @@ app.layout = html.Div(children=[
                                'Created in haste ',
                                # html.I(className="fa fa-heart"), 
                                ' by ',
-                               html.A('Koba',href='http://www.kobakhit.com/',target='_blank')]
+                               html.A('kobakhit',href='http://www.kobakhit.com/',target='_blank')]
             ,className = 'container')], 
         className='six columns', style = {'text-align':'right'})
     ], className = 'row'),
@@ -166,7 +166,7 @@ def create_hist(dff,column,title):
                 'layout': {'title': title}  
             }
 
-# Create Histogram
+# Create heatmap
 def create_heatmap(dff,title):
     dff_price = pd.pivot_table(dff, values='listing Price', 
                      index=['section Name'], columns=['row'], 
@@ -178,7 +178,7 @@ def create_heatmap(dff,title):
 
     dff = dff_price
 
-    height = dff.shape[0]*15
+    height = dff.shape[0]*15 
     if height < 400: height = 400
 
     cols = sort_mixed_list(list(dff.columns.values))
@@ -229,7 +229,7 @@ def filter_points(dff,selectedDatas):
                     selectedids = np.intersect1d(
                         selectedids, selected_index)
 
-        print(selectedids, file=sys.stderr)
+
         dff = dff.loc[dff.index.isin(selectedids),:]
         return selectedids
 
@@ -323,8 +323,6 @@ def update_download_link(selected_row_indices):
 #     dash.dependencies.Input('cache','children')])
 # def display_tabs(value):
 #     dash.dependencies.Input
-
-
 
 
 app.css.append_css({

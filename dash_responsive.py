@@ -12,8 +12,12 @@ class Dash_responsive(dash.Dash):
         title = getattr(self, 'title', 'Dash')
         return ('''
         <!DOCTYPE html>
-        <html>
+        <html prefix="og: http://ogp.me/ns#">
             <head>
+                <meta property="og:title" content="{}"/>
+                <meta property="og:url" content="https://stubhub-listings.herokuapp.com"/>
+                <meta property="og:description"
+                  content="This app enables you to download all stubhub listings for a given event id."/>
                 <meta name="og:image" content="https://cdn.rawgit.com/KobaKhit/stubhubAPI/dc4969bc/readme_plots/heatmap.png"/>
                 <title>{}</title>
                 {}
@@ -30,4 +34,4 @@ class Dash_responsive(dash.Dash):
                 {}
             </footer>
         </html>
-        '''.format(title, css, config, scripts))
+        '''.format(title,title, css, config, scripts))
