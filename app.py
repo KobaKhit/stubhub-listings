@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from dash_responsive import Dash_responsive 
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -16,6 +17,7 @@ import re
 from textwrap import dedent as d
 import json
 import sys
+import base64 
 
 
 
@@ -25,6 +27,7 @@ def spacer(text):
 styles = {
     'datatable':{'font-size':'12px'}
 }
+
 
 # Enter user's API key, secret, and Stubhub login
 app_token = '7131e534-bbec-374f-b1e4-1bdf6909a8ee'
@@ -37,12 +40,13 @@ df = pd.read_csv('flyers listings.csv')
 df = df.loc[(df['Event']=='Washington Capitals 3/18/2018'),:]
 df = df.rename(spacer,axis='columns')
 
-DESC = '''This app allows you to download all stubhub listings for a given event id. 
-          I developed it using [Dash](https://plot.ly/products/dash/) and a [stubhub API](https://github.com/KobaKhit/stubhubAPI) 
-          wrapper I wrote in python.
+DESC = '''This app enables you to download all stubhub listings for a given event id. 
+          I developed it using [Dash](https://plot.ly/products/dash/) and my [stubhub API](https://github.com/KobaKhit/stubhubAPI) 
+          python wrapper.
 '''
 
-app = dash.Dash(__name__)
+app = Dash_responsive()
+app.title = 'Stubhub Listings'
 server = app.server
 
 app.layout = html.Div(children=[
@@ -54,7 +58,7 @@ app.layout = html.Div(children=[
             html.Div(children='''
                 Enter event id and press submit.
             '''),
-            html.Div(['stubhub.com/event/',
+            html.Div(['stubhub.com/<event-name>/event/',
                       html.Strong('103511793')], style = {'color':'purple'}),
             html.Div([
             dcc.Input(id='input-1-state', type='text', value=''),
