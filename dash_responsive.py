@@ -28,10 +28,9 @@ class Dash_responsive(dash.Dash):
                         Loading Stubhub Listings...
                     </div>
                 </div>
+                {}
+                {}
             </body>
-            <footer>
-                {}
-                {}
-            </footer>
+
         </html>
         '''.format(title,title, css, config, scripts))
