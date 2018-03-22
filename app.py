@@ -339,8 +339,13 @@ app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/brPBPO.css"
 
 # google analytics 
 app.scripts.append_script({
-'external_url': 'https://cdn.rawgit.com/KobaKhit/stuhub-listings/1233c436/static/js/ga.js'
+'external_url': 'https://www.googletagmanager.com/gtag/js?id=UA-116215073-1'
 })
+
+app.scripts.append_script({
+'external_url': 'https://cdn.rawgit.com/KobaKhit/stuhub-listings/d7b78ce7/static/js/ga.js'
+})
+
 
 
 
