@@ -33,8 +33,8 @@ styles = {
 app_token = '7131e534-bbec-374f-b1e4-1bdf6909a8ee'
 consumer_key = 'jC475_MWRt6VV0aRz6nhA4Kpfloa'
 consumer_secret = 'U7bW44Spj64CDYwUQSofJaMh1zka'
-stubhub_username = ''
-stubhub_password = ''
+stubhub_username = 'kobakhit@gmail.com'
+stubhub_password = '12271991Nba'
 
 df = pd.read_csv('flyers listings.csv')
 df = df.loc[(df['Event']=='Washington Capitals 3/18/2018'),:]
