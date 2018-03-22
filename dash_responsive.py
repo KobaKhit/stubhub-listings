@@ -31,6 +31,10 @@ class Dash_responsive(dash.Dash):
                 {}
                 {}
             </body>
+            <!-- Google Tag Manager (noscript) -->
+            <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TJV9V9G"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+            <!-- End Google Tag Manager (noscript) -->
 
         </html>
         '''.format(title,title, css, config, scripts))
