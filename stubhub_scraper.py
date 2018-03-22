@@ -121,9 +121,9 @@ class St(object):
 
 def main():
 	# Enter user's API key, secret, and Stubhub login
-	app_token = '7131e534-bbec-374f-b1e4-1bdf6909a8ee'
-	consumer_key = 'jC475_MWRt6VV0aRz6nhA4Kpfloa'
-	consumer_secret = 'U7bW44Spj64CDYwUQSofJaMh1zka'
+	app_token = ''
+	consumer_key = ''
+	consumer_secret = ''
 	stubhub_username = ''
 	stubhub_password = ''
 
