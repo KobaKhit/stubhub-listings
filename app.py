@@ -343,7 +343,7 @@ app.scripts.append_script({
 })
 
 app.scripts.append_script({
-'external_url': 'https://cdn.rawgit.com/KobaKhit/stuhub-listings/d7b78ce7/static/js/ga.js'
+'external_url': 'https://cdn.rawgit.com/KobaKhit/stuhub-listings/186dcc84/static/js/ga.js'
 })
 
 
