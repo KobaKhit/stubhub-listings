@@ -52,6 +52,7 @@ server = app.server
 app.layout = html.Div(children=[
 
     html.Div([
+        # Left Heading
         html.Div([
             html.H1(children='Stubhub Listings'),
 
@@ -67,16 +68,19 @@ app.layout = html.Div(children=[
             html.Div(id='cache', style={'display': 'none'})])
 
             ], 
-        className='six columns'),
+        className='four columns'),
 
+        # Right Heading
         html.Div([
             html.Div(children=[html.Br(),dcc.Markdown(DESC), 
                                'Created in haste ',
                                # html.I(className="fa fa-heart"), 
                                ' by ',
-                               html.A('kobakhit',href='http://www.kobakhit.com/',target='_blank')]
-            ,className = 'container')], 
-        className='six columns', style = {'text-align':'right'})
+                               html.A('kobakhit',href='http://www.kobakhit.com/',target='_blank'),
+                               html.Br(),
+                               html.Div([html.Div(id = 'dataframetable')],style={'float':'right','font-size':'12px'})]
+            ,className = 'container',style = {'text-align':'right'})], 
+        className='eight columns')
     ], className = 'row'),
 
     # dcc.Tabs(
@@ -89,6 +93,7 @@ app.layout = html.Div(children=[
     # ),
     # html.Div(id='tab-output'),
 
+    # Histograms
     html.Div([
         html.Div([
                 dcc.Graph(id='g1', figure={'data': []})
@@ -99,6 +104,7 @@ app.layout = html.Div(children=[
             ], className="six columns")
     ],className = 'row'),
 
+    # Directions
     html.Div([
         html.Div([
                 dcc.Markdown(d("""
@@ -109,7 +115,8 @@ app.layout = html.Div(children=[
             ], className="twelve columns")
     ],className = 'row'),
 
-     html.A(
+    # Download button
+    html.A(
         'Download All Listings',
         id='download-link',
         download="all_stubhub_listings.csv",
@@ -117,6 +124,7 @@ app.layout = html.Div(children=[
         target="_blank"
     ),
 
+    # Data table
     html.Div(id = 'datatable', children = [
         dt.DataTable(
             rows=[{}],
@@ -132,12 +140,15 @@ app.layout = html.Div(children=[
         )
     ],style=styles['datatable']),
 
-    html.Div([
-                dcc.Graph(id='heatmap', figure={'data': []}, style={'height':'800px','font-size': '10px'})
-            ])
+    # Heatmap
+    html.Div([dcc.Graph(id='heatmap', 
+                        figure={'data': []}, 
+                        style={'height':'800px','font-size': '10px'})
+    ])
 ])
 
 
+## Util functions ##
 # sort mixed list
 def sort_mixed_list(lst):
     ret = []
@@ -178,7 +189,7 @@ def create_heatmap(dff,title):
 
     dff = dff_price
 
-    height = dff.shape[0]*15 
+    height = dff.shape[0]*15 # pixels? per row
     if height < 400: height = 400
 
     cols = sort_mixed_list(list(dff.columns.values))
@@ -190,12 +201,13 @@ def create_heatmap(dff,title):
     z = dff.values.tolist()
     q = dff_quantity.values.tolist()
 
+    # create hover box
+    hoverbox = '''Row/Item: {}<br />Section: {}<br />Avg. Price: ${:,.2f}<br />Quantity: {:,.0f}'''
     hovertext = list()
     for yi, yy in enumerate(y):
         hovertext.append(list())
         for xi, xx in enumerate(x):
-            hovertext[-1].append('''Row/Item: {}<br />Section: {}<br />Avg. Price: ${:,.2f}<br />Quantity: {:,.0f}'''
-                                 .format(xx, yy, z[yi][xi],q[yi][xi]))
+            hovertext[-1].append(hoverbox.format(xx, yy, z[yi][xi],q[yi][xi]))
 
 
     trace = go.Heatmap(z = dff.values.tolist(),
@@ -206,6 +218,7 @@ def create_heatmap(dff,title):
                        colorscale='Viridis',
                        reversescale= True)
 
+    # added custom label to xaxis
     layout = go.Layout(xaxis=dict(categoryorder='array', categoryarray=list(dff.columns.values), type="category", side="top"),
                        yaxis=dict(tickfont=dict(size=8)),
                        margin=go.Margin(l=200,r=50,b=100,t=150,pad=4),
@@ -248,7 +261,7 @@ def update_output(n_clicks,cache, input1):
     except:
         return 'Invalid event id.'
 
-# fetch data suing stubhub api
+# fetch data using stubhub api
 @app.callback(dash.dependencies.Output('cache', 'children'),
               [dash.dependencies.Input('submit-button', 'n_clicks')],
               [dash.dependencies.State('input-1-state', 'value')])
@@ -271,6 +284,27 @@ def get_data(n_clicks, input1):
 #     #points = filter_points(selectedDatas).index.values.tolist()
 
 #     return json.dumps([selectedDatas], indent=2)
+
+# create summary table
+@app.callback(dash.dependencies.Output('dataframetable', 'children'),
+              [dash.dependencies.Input('cache', 'children')])
+def create_summary_table(data,max_rows=10):
+    table = round(pd.DataFrame(df[['listing Price','current Price']].describe()).transpose(),2)
+    prtype = pd.DataFrame(['listing price','current price'])
+    table.insert(0,'price type',prtype[0].values)
+    table = table.drop(columns=['count'])
+    return html.Table(
+        # Header
+        [html.Tr([html.Th(col) for col in table.columns])] +
+
+        # Body
+        [html.Tr([
+            html.Td('$' + str(table.iloc[i][col])) 
+            if col not in ['price type'] 
+            else html.Td(str(table.iloc[i][col])) for col in table.columns
+            ]) 
+        for i in range(min(len(table), max_rows))
+        ])
 
 
 # create quantity histogram
@@ -335,7 +369,7 @@ app.css.append_css({
 })
 
 # Loading screen CSS
-app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/brPBPO.css"})
+app.css.append_css({"external_url": "https://codepen.io/KobaKhit/pen/xWrXPo.css"})
 
 # google analytics 
 app.scripts.append_script({
