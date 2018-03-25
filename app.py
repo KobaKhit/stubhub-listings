@@ -78,7 +78,8 @@ app.layout = html.Div(children=[
                                ' by ',
                                html.A('kobakhit',href='http://www.kobakhit.com/',target='_blank'),
                                html.Br(),
-                               html.Div([html.Div(id = 'dataframetable')],style={'float':'right','font-size':'12px'})]
+                               # Summary Table
+                               html.Div([html.Div(id = 'dataframetable')],style={'float':'right','font-size':'14px'})]
             ,className = 'container',style = {'text-align':'right'})], 
         className='eight columns')
     ], className = 'row'),
@@ -289,7 +290,8 @@ def get_data(n_clicks, input1):
 @app.callback(dash.dependencies.Output('dataframetable', 'children'),
               [dash.dependencies.Input('cache', 'children')])
 def create_summary_table(data,max_rows=10):
-    table = round(pd.DataFrame(df[['listing Price','current Price']].describe()).transpose(),2)
+    dff = pd.read_json(eval(data), orient='split')
+    table = round(pd.DataFrame(dff[['listing Price','current Price']].describe()).transpose(),2)
     prtype = pd.DataFrame(['listing price','current price'])
     table.insert(0,'price type',prtype[0].values)
     table = table.drop(columns=['count'])
@@ -359,23 +361,27 @@ def update_download_link(selected_row_indices):
 #     dash.dependencies.Input
 
 
-app.css.append_css({
-    'external_url': 'https://codepen.io/chriddyp/pen/bWLwgP.css'
-})
+# app.css.append_css({
+#     'external_url': 'https://codepen.io/chriddyp/pen/bWLwgP.css'
+# })
+
+# custom css
+app.css.append_css({"external_url": "https://codepen.io/KobaKhit/pen/xWrXPo.css"})
+
+# Loading screen CSS
+app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/brPBPO.css"})
 
 # font awesome
 app.css.append_css({
     'external_url': 'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'
 })
 
-# Loading screen CSS
-app.css.append_css({"external_url": "https://codepen.io/KobaKhit/pen/xWrXPo.css"})
-
-# google analytics 
+# google google tag manager 
 app.scripts.append_script({
 'external_url': 'https://www.googletagmanager.com/gtag/js?id=UA-116215073-1'
 })
 
+# google analytics
 app.scripts.append_script({
 'external_url': 'https://cdn.rawgit.com/KobaKhit/stuhub-listings/186dcc84/static/js/ga.js'
 })
