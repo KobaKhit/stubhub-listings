@@ -54,7 +54,7 @@ app.layout = html.Div(children=[
     html.Div([
         # Left Heading
         html.Div([
-            html.H1(children='Stubhub Listings'),
+            html.H1(children='Stuhub Listings'),
 
             html.Div(children='''
                 Enter event id and press submit.
@@ -348,9 +348,12 @@ def create_table(cache,*selectedDatas):
 # download all listings button
 @app.callback(
     dash.dependencies.Output('download-link', 'href'),
-    [dash.dependencies.Input('datatable-df', 'selected_row_indices')])
-def update_download_link(selected_row_indices):
-    csv_string = df.to_csv(index=False, encoding='utf-8')
+    [dash.dependencies.Input('cache', 'children')],
+    [dash.dependencies.State('input-1-state', 'value')])
+def update_download_link(cache,eventid):
+    csv_string = pd.read_json(eval(cache), orient='split')
+    csv_string['eventId'] = eventid
+    csv_string = csv_string.to_csv(index=False,encoding='utf-8')
     csv_string = "data:text/csv;charset=utf-8," + urllib.parse.quote(csv_string)
     return csv_string
 

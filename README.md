@@ -6,11 +6,11 @@ https://dash.plot.ly/sharing-data-between-callbacks
 
 ## Deploy
 
-conda create -m venv
+conda create -n venv
 
-cond install pip
+conda install pip
 
-pip install dash dash-renderer dash-core-components dash-html-components dash_table_experiments plotly gunicorn numpy tqdm
+pip install dash dash-renderer dash-core-components dash-html-components dash_table_experiments plotly gunicorn numpy tqdm pandas
 
 pip freeze > requirements.txt
 
