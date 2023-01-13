@@ -8,7 +8,7 @@ import dash_table_experiments as dt
 import plotly.graph_objs as go
 
 import pandas as pd
-import numpy as np
+
 
 from stubhub_scraper import St
 
@@ -18,8 +18,8 @@ from textwrap import dedent as d
 import json
 import sys
 
-
-
+def intersection(a, b):
+    return list(set(a).intersection(b))
 
 def spacer(text):
     return re.sub(r'([A-Z])',r" \1",text).strip()
@@ -33,8 +33,8 @@ styles = {
 app_token = '7131e534-bbec-374f-b1e4-1bdf6909a8ee'
 consumer_key = 'jC475_MWRt6VV0aRz6nhA4Kpfloa'
 consumer_secret = 'U7bW44Spj64CDYwUQSofJaMh1zka'
-stubhub_username = 'kobakhit@gmail.com'
-stubhub_password = '12271991Nba'
+stubhub_username = ''
+stubhub_password = ''
 
 df = pd.read_csv('flyers listings.csv')
 df = df.loc[(df['Event']=='Washington Capitals 3/18/2018'),:]
@@ -54,7 +54,7 @@ app.layout = html.Div(children=[
     html.Div([
         # Left Heading
         html.Div([
-            html.H1(children='Stuhub Listings'),
+            html.H1(children='Stubhub Listings'),
 
             html.Div(children='''
                 Enter event id and press submit.
@@ -63,7 +63,7 @@ app.layout = html.Div(children=[
                       html.Strong('103511793')], style = {'color':'purple'}),
             html.Div([
             dcc.Input(id='input-1-state', type='text', value=''),
-            html.Button(id='submit-button', n_clicks=0, children='Submit'),
+            html.Div([html.Button(id='submit-button', n_clicks=0, children='Submit'),' Deprecated. Stubhub changed its api.']),
             html.Div(id='output-state'),
             html.Div(id='cache', style={'display': 'none'})])
 
@@ -73,7 +73,7 @@ app.layout = html.Div(children=[
         # Right Heading
         html.Div([
             html.Div(children=[html.Br(),dcc.Markdown(DESC), 
-                               'Created in haste ',
+                               'Created in 2018 ',
                                # html.I(className="fa fa-heart"), 
                                ' by ',
                                html.A('kobakhit',href='http://www.kobakhit.com/',target='_blank'),
@@ -182,11 +182,11 @@ def create_hist(dff,column,title):
 def create_heatmap(dff,title):
     dff_price = pd.pivot_table(dff, values='listing Price', 
                      index=['section Name'], columns=['row'], 
-                     aggfunc=np.mean)
+                     aggfunc='mean')
 
     dff_quantity = pd.pivot_table(dff, values='quantity', 
                          index=['section Name'], columns=['row'], 
-                         aggfunc=np.sum)
+                         aggfunc=sum)
 
     dff = dff_price
 
@@ -240,7 +240,7 @@ def filter_points(dff,selectedDatas):
                 selected_index = sum(selected_index,[])
                 selected_index = dff.iloc[selected_index].index
                 if len(selected_index) > 0:
-                    selectedids = np.intersect1d(
+                    selectedids = intersection(
                         selectedids, selected_index)
 
 
@@ -256,7 +256,7 @@ def update_output(n_clicks,cache, input1):
     try:
         dff = pd.read_json(eval(cache), orient='split')
         retrieve_time = dff['retrieve Time'].iloc[0]
-        return html.Div(['There are {} listings for event id {}.'.format(dff.shape[0], input1),
+        return html.Div(['There are {} listings for event id 103511793.'.format(dff.shape[0], input1),
                          html.Br(),
                          'Data was retrieved on {}'.format(retrieve_time)])
     except:
