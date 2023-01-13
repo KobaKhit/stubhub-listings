@@ -7,7 +7,7 @@ dash-html-components==0.9.0
 dash-renderer==0.11.3
 dash_table_experiments
 decorator==4.2.1
-Flask==0.12.2
+Flask==1.0
 Flask-Compress==1.4.0
 gunicorn==19.7.1
 idna==2.6
